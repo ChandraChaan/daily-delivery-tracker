@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'src/home_page.dart';
+import 'src/look.dart';
 
 void main() => runApp(const DeliveryApp());
 
@@ -15,12 +16,8 @@ class DeliveryApp extends StatelessWidget {
     return MaterialApp(
       title: 'Daily Delivery Tracker',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: const Color(0xFF1B6E8F), useMaterial3: true),
-      darkTheme: ThemeData(
-        colorSchemeSeed: const Color(0xFF1B6E8F),
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: Look.light.theme(Brightness.light),
+      darkTheme: Look.dark.theme(Brightness.dark),
       home: home ?? const HomePage(),
     );
   }

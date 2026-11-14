@@ -4,13 +4,13 @@ import 'package:daily_delivery_tracker/src/ledger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Item milk() => Item(
-      id: 'm',
-      name: 'Milk',
-      unit: 'litre',
-      defaultQty: 1,
-      startDate: DateTime(2026, 1, 1),
-      rates: [RateChange(DateTime(2026, 1, 1), 5600)],
-    );
+  id: 'm',
+  name: 'Milk',
+  unit: 'litre',
+  defaultQty: 1,
+  startDate: DateTime(2026, 1, 1),
+  rates: [RateChange(DateTime(2026, 1, 1), 5600)],
+);
 
 void main() {
   test('a full month at the default quantity', () {
@@ -78,7 +78,9 @@ void main() {
     final m = milk()
       ..setQty(DateTime(2026, 11, 3), 0)
       ..setRate(DateTime(2026, 11, 16), 6000);
-    final back = Item.fromJson(jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>);
+    final back = Item.fromJson(
+      jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>,
+    );
     expect(billFor(back, 2026, 11).total, billFor(m, 2026, 11).total);
     expect(back.overrides, m.overrides);
   });

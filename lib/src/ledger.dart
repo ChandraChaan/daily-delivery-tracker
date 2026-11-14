@@ -26,9 +26,9 @@ class Item {
     required DateTime startDate,
     List<RateChange>? rates,
     Map<String, double>? overrides,
-  })  : startDate = _day(startDate),
-        rates = rates ?? [],
-        overrides = overrides ?? {};
+  }) : startDate = _day(startDate),
+       rates = rates ?? [],
+       overrides = overrides ?? {};
 
   final String id;
   String name;
@@ -69,7 +69,9 @@ class Item {
     final day = _day(d);
     RateChange? best;
     for (final r in rates) {
-      if (!r.from.isAfter(day) && (best == null || r.from.isAfter(best.from))) best = r;
+      if (!r.from.isAfter(day) && (best == null || r.from.isAfter(best.from))) {
+        best = r;
+      }
     }
     return best?.paisePerUnit ?? 0;
   }
@@ -83,26 +85,30 @@ class Item {
   }
 
   Map<String, Object> toJson() => {
-        'id': id,
-        'name': name,
-        'unit': unit,
-        'qty': defaultQty,
-        'start': dayKey(startDate),
-        'rates': [for (final r in rates) r.toJson()],
-        'overrides': overrides,
-      };
+    'id': id,
+    'name': name,
+    'unit': unit,
+    'qty': defaultQty,
+    'start': dayKey(startDate),
+    'rates': [for (final r in rates) r.toJson()],
+    'overrides': overrides,
+  };
 
   static Item fromJson(Map<String, dynamic> j) => Item(
-        id: j['id'] as String,
-        name: j['name'] as String,
-        unit: j['unit'] as String,
-        defaultQty: (j['qty'] as num).toDouble(),
-        startDate: DateTime.parse(j['start'] as String),
-        rates: [for (final r in j['rates'] as List) RateChange.fromJson(r as Map<String, dynamic>)],
-        overrides: {
-          for (final e in (j['overrides'] as Map<String, dynamic>).entries) e.key: (e.value as num).toDouble(),
-        },
-      );
+    id: j['id'] as String,
+    name: j['name'] as String,
+    unit: j['unit'] as String,
+    defaultQty: (j['qty'] as num).toDouble(),
+    startDate: DateTime.parse(j['start'] as String),
+    rates: [
+      for (final r in j['rates'] as List)
+        RateChange.fromJson(r as Map<String, dynamic>),
+    ],
+    overrides: {
+      for (final e in (j['overrides'] as Map<String, dynamic>).entries)
+        e.key: (e.value as num).toDouble(),
+    },
+  );
 }
 
 class DayLine {
@@ -130,13 +136,17 @@ class MonthBill {
   int get total => days.fold(0, (s, d) => s + d.amount);
 
   /// Days on or after the start date with nothing delivered.
-  int get skippedDays => days.where((d) => d.qty == 0 && !d.date.isBefore(item.startDate)).length;
+  int get skippedDays =>
+      days.where((d) => d.qty == 0 && !d.date.isBefore(item.startDate)).length;
 
   /// Days with more than the usual quantity.
   int get extraDays => days.where((d) => d.qty > item.defaultQty).length;
 
   /// Distinct prices used this month, in order.
-  List<int> get ratesUsed => {for (final d in days) if (d.qty > 0) d.rate}.toList();
+  List<int> get ratesUsed => {
+    for (final d in days)
+      if (d.qty > 0) d.rate,
+  }.toList();
 }
 
 /// The bill for one item and month. Days after [upTo] (usually today) are
@@ -176,12 +186,23 @@ String formatPaise(int p) {
   return paise == 0 ? grouped : '$grouped.${paise.toString().padLeft(2, '0')}';
 }
 
-String formatQty(double q) =>
-    q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(2).replaceFirst(RegExp(r'0$'), '');
+String formatQty(double q) => q == q.roundToDouble()
+    ? q.toInt().toString()
+    : q.toStringAsFixed(2).replaceFirst(RegExp(r'0$'), '');
 
 const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July',
-  'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 /// Plain text to paste into WhatsApp or SMS.
@@ -189,7 +210,8 @@ String billText(List<MonthBill> bills, {DateTime? upTo}) {
   if (bills.isEmpty) return '';
   final b0 = bills.first;
   final title = '${monthNames[b0.month - 1]} ${b0.year}';
-  final partial = upTo != null && b0.days.length < DateTime(b0.year, b0.month + 1, 0).day;
+  final partial =
+      upTo != null && b0.days.length < DateTime(b0.year, b0.month + 1, 0).day;
   final lines = <String>[
     'Bill for $title${partial ? ' (up to ${upTo.day} ${monthNames[upTo.month - 1]})' : ''}',
     '',
@@ -197,10 +219,14 @@ String billText(List<MonthBill> bills, {DateTime? upTo}) {
   var grand = 0;
   for (final b in bills) {
     final rates = b.ratesUsed.map((r) => 'Rs ${formatPaise(r)}').join(' / ');
-    lines.add('${b.item.name}: ${formatQty(b.totalQty)} ${b.item.unit} x $rates = Rs ${formatPaise(b.total)}');
+    lines.add(
+      '${b.item.name}: ${formatQty(b.totalQty)} ${b.item.unit} x $rates = Rs ${formatPaise(b.total)}',
+    );
     final notes = [
-      if (b.skippedDays > 0) '${b.skippedDays} day${b.skippedDays == 1 ? '' : 's'} skipped',
-      if (b.extraDays > 0) '${b.extraDays} day${b.extraDays == 1 ? '' : 's'} extra',
+      if (b.skippedDays > 0)
+        '${b.skippedDays} day${b.skippedDays == 1 ? '' : 's'} skipped',
+      if (b.extraDays > 0)
+        '${b.extraDays} day${b.extraDays == 1 ? '' : 's'} extra',
     ];
     if (notes.isNotEmpty) lines.add('  (${notes.join(', ')})');
     grand += b.total;

@@ -4,10 +4,14 @@ A monthly account book for what comes to your door every day: milk, curd packets
 
 For the end-of-month "how much do I owe the milkman?" conversation.
 
+<img src="docs/card.jpg" width="300" alt="Month cards for milk and a water can, with skipped days struck in red and extra days circled">
+
+<sub>Sample data. Each item looks like the paper card on the fridge: the quantity for each day, a red strike when it did not come, a circle when it came extra.</sub>
+
 ## What it does
 
 - Add an item with its unit (litre, packet, can, paper), the usual quantity per day, the price per unit and the date it started.
-- Each item shows its month as a calendar. Tap a day to mark **Did not come**, **Extra**, or any other amount (half litres are fine).
+- Each item shows its month as a card grid, like the paper card on the fridge. Open it and tap a day to mark **Did not come**, **Extra**, or any other amount (half litres are fine).
 - **Price changes** take effect from a date you choose, so a rise in the middle of the month bills each day at its own price.
 - The current month is counted **only up to today**, so you see what is due so far.
 - **Copy bill as text** puts a plain bill on the clipboard, ready to paste into WhatsApp or SMS:
